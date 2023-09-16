@@ -6,7 +6,7 @@ exports.getCatalog = async (req, res) => {
     const products = await Product.find({});
     res.json(products);
   } catch (error) {
-    res.status(500).json({ Mensaje: "Error al obtener los productos." });
+    res.status(500).json({ Mensaje: "No se pudo obtener el producto.", error });
   }
 };
 
@@ -14,11 +14,11 @@ exports.getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.ID);
     if (!product) {
-      return res.status(404).json({ Mensaje: "Producto no encontrado." });
+      return res.status(404).json({ Mensaje: "No se encontró el producto." });
     }
     res.json(product);
   } catch (error) {
-    res.status(500).json({ Mensaje: "Error al obtener el producto." });
+    res.status(500).json({ Mensaje: "No se pudo obtener el producto.", error });
   }
 };
 
@@ -50,7 +50,7 @@ exports.createOrUpdateProduct = async (req, res) => {
     ) {
       return res
         .status(400)
-        .json({ Mensaje: "Todos los campos son obligatorios." });
+        .json({ Mensaje: "Ingrese los campos requeridos." });
     }
 
     const PrecioDescuento = Precio * ((100 - Descuento) / 100);
@@ -74,7 +74,7 @@ exports.createOrUpdateProduct = async (req, res) => {
         { new: true }
       );
       return res.json({
-        Mensaje: "Producto actualizado exitosamente.",
+        Mensaje: "Se actualizó el producto.",
         product,
       });
     }
@@ -93,9 +93,9 @@ exports.createOrUpdateProduct = async (req, res) => {
     });
 
     await product.save();
-    res.json({ Mensaje: "Producto creado exitosamente.", product });
+    res.json({ Mensaje: "Registro correcto.", product });
   } catch (error) {
-    res.status(500).json({ Mensaje: "Error al gestionar el producto." });
+    res.status(500).json({ Mensaje: "No se agregó el producto." });
   }
 };
 
@@ -103,17 +103,17 @@ exports.deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.ID);
     if (!product) {
-      return res.status(404).json({ Mensaje: "Producto no encontrado." });
+      return res.status(404).json({ Mensaje: "No se encontró el producto." });
     }
     product.Habilitado = !product.Habilitado;
     await product.save();
 
     if (product.Habilitado) {
-      res.json({ Mensaje: "Producto reactivado exitosamente." });
+      res.json({ Mensaje: "Producto activo." });
     } else {
-      res.json({ Mensaje: "Producto desactivado exitosamente." });
+      res.json({ Mensaje: "Producto inactivo." });
     }
   } catch (error) {
-    res.status(500).json({ Mensaje: "Error al gestionar el producto." });
+    res.status(500).json({ Mensaje: "Error al actualizar el estado del producto." });
   }
 };

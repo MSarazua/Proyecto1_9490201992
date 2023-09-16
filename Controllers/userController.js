@@ -34,28 +34,28 @@ exports.registerUser = async (req, res) => {
     ) {
       return res
         .status(400)
-        .json({ Mensaje: "Por favor, complete todos los campos." });
+        .json({ Mensaje: "Ingrese los campos requeridos." });
     }
 
     if (Clave !== ValidacionClave) {
-      return res.status(400).json({ Mensaje: "Las contraseñas no coinciden." });
+      return res.status(400).json({ Mensaje: "La contraseña no coincide." });
     }
 
     if (Clave.length < 8) {
       return res
         .status(400)
-        .json({ Mensaje: "La contraseña debe tener al menos 8 caracteres." });
+        .json({ Mensaje: "Contraseña de 8 caracteres." });
     }
 
     const newUser = new User(req.body);
     await newUser.save();
 
-    res.status(201).json({ Mensaje: "Usuario registrado exitosamente." });
+    res.status(201).json({ Mensaje: "El usuario se registró con éxito." });
   } catch (error) {
     if (error.code === 11000) {
-      res.status(400).json({ Mensaje: "DPI, NIT o Correo ya existen." });
+      res.status(400).json({ Mensaje: "Hay campos ya existentes en la BD." });
     } else {
-      res.status(500).json({ Mensaje: "Error al registrar el usuario.", error });
+      res.status(500).json({ Mensaje: "No se pudo registrar el usuario.", error });
     }
   }
 };
@@ -81,9 +81,9 @@ exports.loginUser = async (req, res) => {
     const payload = { userID: user.DPI };
     const token = jwt.sign(payload, "88DM3!g#wra9", { expiresIn: "1h" });
 
-    res.json({ Mensaje: "Inicio de sesión exitoso.", Token: token });
+    res.json({ Mensaje: "Login exitoso.", Token: token });
   } catch (error) {
-    res.status(500).json({ Mensaje: "Error al iniciar sesión." });
+    res.status(500).json({ Mensaje: "No se pudo iniciar sesión." });
   }
 };
 
@@ -91,10 +91,10 @@ exports.getProfile = async (req, res) => {
   try {
     const user = await User.findOne({ DPI: req.params.DPI });
     if (!user)
-      return res.status(404).json({ Mensaje: "Usuario no encontrado." });
+      return res.status(404).json({ Mensaje: "No se encontró el usuario." });
     res.json(user);
   } catch (error) {
-    res.status(500).json({ Mensaje: "Error al obtener el perfil." });
+    res.status(500).json({ Mensaje: "El perfil no existe." });
   }
 };
 
@@ -102,11 +102,11 @@ exports.updateProfile = async (req, res) => {
     const { Nombres, Apellidos, FechaNacimiento, Clave, DireccionEntrega, NIT, NúmeroTelefonico, CorreoElectronico } = req.body;
 
     if (!Nombres || !Apellidos || !FechaNacimiento || !Clave || !DireccionEntrega || !NIT || !NúmeroTelefonico || !CorreoElectronico) {
-        return res.status(400).json({ Mensaje: 'Todos los campos son obligatorios.' });
+        return res.status(400).json({ Mensaje: 'Ingrese los campos requeridos.' });
     }
 
     if (!emailValidator.validate(CorreoElectronico)) {
-        return res.status(400).json({ Mensaje: 'El formato del correo electrónico no es válido.' });
+        return res.status(400).json({ Mensaje: 'Ingrese un correo válido.' });
     }
 
     try {
@@ -115,13 +115,13 @@ exports.updateProfile = async (req, res) => {
         const nitExists = await User.findOne({ NIT, _id: { $ne: req.user.userID } });
 
         if (dpiExists) {
-            return res.status(400).json({ Mensaje: 'El DPI ya está registrado.' });
+            return res.status(400).json({ Mensaje: 'DPI existente en la BD.' });
         }
         if (emailExists) {
-            return res.status(400).json({ Mensaje: 'El correo electrónico ya está registrado.' });
+            return res.status(400).json({ Mensaje: 'Correo existente en la BD.' });
         }
         if (nitExists) {
-            return res.status(400).json({ Mensaje: 'El NIT ya está registrado.' });
+            return res.status(400).json({ Mensaje: 'NIT existente en la BD.' });
         }
 
         const updatedUser = await User.findOneAndUpdate(
@@ -140,12 +140,12 @@ exports.updateProfile = async (req, res) => {
         );
 
         if (!updatedUser) {
-            return res.status(404).json({ Mensaje: 'Usuario no encontrado.' });
+            return res.status(404).json({ Mensaje: 'El usuario no existe.' });
         }
 
-        res.json({ Mensaje: 'Perfil actualizado exitosamente.', updatedUser });
+        res.json({ Mensaje: 'Se actualizó el perfil.', updatedUser });
     } catch (error) {
-        res.status(500).json({ Mensaje: 'Error al actualizar el perfil.' });
+        res.status(500).json({ Mensaje: 'No se actualizó el perfil.', error });
     }
 };
 
@@ -153,9 +153,9 @@ exports.deleteProfile = async (req, res) => {
   try {
     const user = await User.findOneAndDelete({ DPI: req.params.DPI });
     if (!user)
-      return res.status(404).json({ Mensaje: "Usuario no encontrado." });
-    res.json({ Mensaje: "Perfil eliminado exitosamente." });
+      return res.status(404).json({ Mensaje: "El usuario no existe." });
+    res.json({ Mensaje: "Se eliminó el usuario." });
   } catch (error) {
-    res.status(500).json({ Mensaje: "Error al eliminar el perfil." });
+    res.status(500).json({ Mensaje: "No se pudo eliminar el usuario.", error });
   }
 };
