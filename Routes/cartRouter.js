@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const verifyToken = require('./authMiddleware');
-const { getCart, updateCartItem, deleteCartItem } = require('./Controllers/cartController');
+const verifyToken = require('../authMiddleware');
+const { getCart, updateCartItem, deleteCartItem } = require('../Controllers/cartController');
 
 router.get('/carrito', verifyToken, getCart);
 

@@ -2,9 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const userRoutes = require('./userRoutes');
-const productRoutes = require('./productRoutes');
-const cartRoutes = require('./cartRouter');
+const userRoutes = require('./Routes/userRoutes');
+const productRoutes = require('./Routes/productRoutes');
+const cartRoutes = require('./Routes/cartRouter');
 
 const app = express();
 
