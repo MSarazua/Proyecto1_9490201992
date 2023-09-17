@@ -14,14 +14,14 @@ app.use(cors());
 
 mongoose.connect('mongodb://localhost:27017/Desarrollo', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        console.log('Conectado a la base de datos MongoDB');
+        console.log('Conexión exitosa');
     })
     .catch(error => {
-        console.error('Error al conectarse a la base de datos: ', error);
+        console.error('Error de conexión: ', error);
     });
 
 app.get('/', (req, res) => {
-    res.json({ message: 'API de E-commerce funcionando!' });
+    res.json({ message: 'Sistema iniciado' });
 });
 
 app.use('/api', userRoutes);
@@ -30,5 +30,5 @@ app.use('/api', cartRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+    console.log(`Sistema funcionando en el puerto: ${PORT}`);
 });
